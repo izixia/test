@@ -1,0 +1,100 @@
+package com.aisile.sellergoods.service.impl;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.aisile.mapper.TbSellerMapper;
+import com.aisile.pojo.TbSeller;
+import com.aisile.pojo.TbSellerExample;
+import com.aisile.pojo.TbSellerExample.Criteria;
+import com.aisile.pojo.entity.PageResult;
+import com.aisile.sellergoods.service.SellerService;
+import com.alibaba.dubbo.config.annotation.Service;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+
+/**
+*
+*@author：小郭
+*@date：2018年7月6日 下午12:23:05
+*/
+@Service
+public class SellerServiceImpl implements SellerService {
+	@Autowired
+	private TbSellerMapper tbSellerMapper;
+	
+	@Override
+	public List<TbSeller> findAll() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public PageResult findPage(int pageNum, int pageSize) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public PageResult findSearch(int pageNum, int pageSize, TbSeller seller) {
+		PageHelper.startPage(pageNum,pageSize);
+		TbSellerExample example=new TbSellerExample();
+		Criteria criteria = example.createCriteria();
+		if(seller.getName()!=null && !seller.getName().equals("")){
+			criteria.andNameLike("%"+seller.getName()+"%");
+		}
+		if(seller.getNickName()!=null && !seller.getNickName().equals("")){
+			criteria.andNickNameLike("%"+seller.getNickName()+"%");
+		}
+		if(seller.getStatus()!=null && !seller.getStatus().equals("")){
+			criteria.andStatusEqualTo(seller.getStatus());
+		}
+		Page<TbSeller> pageinfo=(Page<TbSeller>)tbSellerMapper.selectByExample(example);
+		return new PageResult(pageinfo.getTotal(), pageinfo.getResult());
+	}
+
+	@Override
+	public void add(TbSeller seller) {
+		seller.setStatus("0");
+		seller.setCreateTime(new Date());
+		tbSellerMapper.insert(seller);
+	}
+
+	@Override
+	public void update(TbSeller seller) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public TbSeller findOne(String id) {
+		return tbSellerMapper.selectByPrimaryKey(id);
+	}
+
+	@Override
+	public void delete(Long[] ids) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public List<Map> selectOptionList() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void updateStatus(TbSeller seller,String status) {
+			seller.setStatus(status);
+			tbSellerMapper.updateByPrimaryKey(seller);
+	}
+
+
+
+	
+	
+
+}

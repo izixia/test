@@ -1,0 +1,128 @@
+package com.aisile.sellergoods.service.impl;
+
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.aisile.mapper.TbSpecificationMapper;
+import com.aisile.mapper.TbSpecificationOptionMapper;
+import com.aisile.pojo.TbSpecification;
+import com.aisile.pojo.TbSpecificationExample;
+import com.aisile.pojo.TbSpecificationExample.Criteria;
+import com.aisile.pojo.TbSpecificationOption;
+import com.aisile.pojo.TbSpecificationOptionExample;
+import com.aisile.pojo.entity.PageResult;
+import com.aisile.pojo.group.Specification;
+import com.aisile.sellergoods.service.SpecificationService;
+import com.alibaba.dubbo.config.annotation.Service;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+
+/**
+*
+*@author：小郭
+*@date：2018年7月8日 上午11:10:59
+*/
+@Service
+public class SpecificationServiceImpl implements SpecificationService {
+	
+	@Autowired
+	private TbSpecificationMapper tbSpecificationMapper;
+	
+	@Autowired
+	private TbSpecificationOptionMapper TbSpecificationOptionMapper;
+	
+	@Override   //查询全部规格的方法
+	public List<TbSpecification> findAll() {
+		return tbSpecificationMapper.selectByExample(null);
+	}
+
+	@Override   // 分页方法
+	public PageResult findPage(int pageNum, int pageSize) {
+		PageHelper.startPage(pageNum,pageSize);
+		Page<TbSpecification> pageinfo = (Page<TbSpecification>) tbSpecificationMapper.selectByExample(null);
+		return new PageResult(pageinfo.getTotal(), pageinfo.getResult());
+	}
+
+	@Override  //模糊分页
+	public PageResult findSearch(int pageNum, int pageSize, TbSpecification Specification) {
+		PageHelper.startPage(pageNum,pageSize);//分页
+		TbSpecificationExample example=new TbSpecificationExample();//条件
+		Criteria criteria = example.createCriteria();//开始拼接条件
+		if(Specification.getSpecName()!=null && !Specification.getSpecName().equals("")){
+			criteria.andSpecNameLike("%"+Specification.getSpecName()+"%");//规格名称
+		}
+		Page<TbSpecification> page = (Page<TbSpecification>) tbSpecificationMapper.selectByExample(example);
+		return new PageResult(page.getTotal(), page.getResult());
+	}
+
+	@Override  //添加
+	public void add(Specification specification) {
+		//获取规格对象
+		TbSpecification tbspe = specification.getSpecification();
+		//根据规格对象,添加规格并自动生成主键id
+		tbSpecificationMapper.insert(tbspe);
+		tbspe.getId();//获取规格id
+		//循环添加规格明细(循环迭代规格明细list集合,依次添加每一个带规格specId的option明细对象)
+		for (TbSpecificationOption option : specification.getSpecificationOptionList()) {
+			option.setSpecId(tbspe.getId());//明细对象内加入规格的id
+			TbSpecificationOptionMapper.insert(option);//将明细对象加入数据库
+		}
+		
+	}
+
+	@Override  //修改
+	public void update(Specification specification) {
+		TbSpecification tbspec = specification.getSpecification();
+		//根据规格id修改规格信息 
+		tbSpecificationMapper.updateByPrimaryKey(tbspec);
+		//根据规格id,删除原来的规格明细
+		TbSpecificationOptionExample optionExample=new TbSpecificationOptionExample();
+		com.aisile.pojo.TbSpecificationOptionExample.Criteria criteria = optionExample.createCriteria(); 
+		criteria.andSpecIdEqualTo(tbspec.getId());
+		//携带规格id条件删除所有相关的明细
+		TbSpecificationOptionMapper.deleteByExample(optionExample);
+		//循环添加规格明细
+		for (TbSpecificationOption option : specification.getSpecificationOptionList()) {
+			option.setSpecId(tbspec.getId());//明细对象内加入规格的id
+			TbSpecificationOptionMapper.insert(option);//将明细对象加入数据库
+		}
+	}
+
+	@Override  //根据id查找对象实体
+	public Specification findOne(Long id) {
+		//根据主键获取规格实体
+		TbSpecification tbspec=tbSpecificationMapper.selectByPrimaryKey(id); 
+		//根据规格id获取明细的实体集合
+		TbSpecificationOptionExample optionExample=new TbSpecificationOptionExample();
+		com.aisile.pojo.TbSpecificationOptionExample.Criteria criteria = optionExample.createCriteria(); 
+		criteria.andSpecIdEqualTo(tbspec.getId());
+		List<TbSpecificationOption> list = TbSpecificationOptionMapper.selectByExample(optionExample);
+		Specification specification=new Specification();
+		specification.setSpecification(tbspec);
+		specification.setSpecificationOptionList(list);
+		return specification;
+	}
+
+	@Override  //删除方法
+	public void delete(Long[] ids) {
+		//进行删除
+		for (Long long1 : ids) {
+			//根据规格id,删除规格
+			tbSpecificationMapper.deleteByPrimaryKey(long1);
+			TbSpecificationOptionExample optionExample=new TbSpecificationOptionExample();
+			com.aisile.pojo.TbSpecificationOptionExample.Criteria criteria = optionExample.createCriteria(); 
+			criteria.andSpecIdEqualTo(long1);
+			//携带规格id条件删除所有相关的明细
+			TbSpecificationOptionMapper.deleteByExample(optionExample);
+		}
+		
+	}
+
+	@Override
+	public List<Map> selectOptionList() {
+		return tbSpecificationMapper.selectOptionList();
+	}
+
+}

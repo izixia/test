@@ -1,0 +1,6 @@
+com\aisile\sellergoods\service\impl\TypeTemplateServiceImpl.class
+com\aisile\sellergoods\service\impl\SellerServiceImpl.class
+com\aisile\sellergoods\service\impl\SpecificationServiceImpl.class
+com\aisile\sellergoods\service\impl\ItemCatServiceImpl.class
+com\aisile\sellergoods\service\impl\BrandServiceImpl.class
+com\aisile\sellergoods\service\impl\GoodsServiceImpl.class

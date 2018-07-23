@@ -1,0 +1,112 @@
+package com.aisile.sellergoods.service.impl;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.aisile.mapper.TbItemCatMapper;
+import com.aisile.pojo.TbItemCat;
+import com.aisile.pojo.TbItemCatExample;
+import com.aisile.pojo.TbItemCatExample.Criteria;
+import com.aisile.pojo.TbSpecification;
+import com.aisile.pojo.TbSpecificationOptionExample;
+import com.aisile.pojo.entity.PageResult;
+import com.aisile.pojo.group.Specification;
+import com.aisile.sellergoods.service.ItemCatService;
+import com.alibaba.dubbo.config.annotation.Service;
+
+
+@Service
+public class ItemCatServiceImpl implements ItemCatService {
+
+	@Autowired
+	private TbItemCatMapper  itemCatMapper;
+	
+	@Override
+	public List<TbItemCat> findAll() {
+		return null;
+	}
+
+	@Override
+	public PageResult findPage(int pageNum, int pageSize) {
+		return null;
+	}
+
+	@Override
+	public PageResult findSearch(int pageNum, int pageSize, TbItemCat itemCat) {
+		return null;
+	}
+
+
+	@Override
+	public void update(TbItemCat itemCat) {
+		itemCatMapper.updateByPrimaryKey(itemCat);
+	}
+
+	@Override
+	public TbItemCat findOne(Long id) {
+		return itemCatMapper.selectByPrimaryKey(id);
+	}
+
+	/*@Override
+	public boolean delete(Long[] ids) {
+		for (Long long1 : ids) {
+			//根据规格id,删除规格
+			//TbItemCat itemCat = itemCatMapper.selectByPrimaryKey(long1);//查询对象
+			TbItemCatExample example=new  TbItemCatExample();//新建对象
+			Criteria criteria2 = example.createCriteria();//开始拼接条件
+			criteria2.andParentIdEqualTo(long1);
+			//List<TbItemCat> list = itemCatMapper.co(example);//返回的集合list.size()
+			 int countByExample = itemCatMapper.countByExample(example);
+				if(countByExample!=0){
+					return false;
+				}else{
+					System.out.println("--------------------"+long1);
+					itemCatMapper.deleteByPrimaryKey(long1);
+					return true;
+				}
+		}
+		return true;
+	}*/
+
+	@Override
+	public boolean delete(Long ids) {
+		
+			//根据规格id,删除规格
+			TbItemCatExample example=new  TbItemCatExample();//新建对象
+			Criteria criteria2 = example.createCriteria();//开始拼接条件
+			criteria2.andParentIdEqualTo(ids);
+			int count = itemCatMapper.countByExample(example);
+				if(count==0){
+					//查询count 等于0 表示可以删除 ，但是不进行return 进行接着循环
+					itemCatMapper.deleteByPrimaryKey(ids);
+				}else if(count!=0){
+				//判断count！=0 表示不可以进行删除 需要直接return 结果  ，提示不可以删除
+					return false;
+				}
+				
+		//最后删除完成  for e  循环结束 读取到return true  返回删除成功
+		return true;
+	}
+	
+	
+	@Override
+	public List<Map> selectOptionList() {
+		return null;
+	}
+
+	@Override
+	public void add(TbItemCat itemCat) {
+		itemCatMapper.insert(itemCat);
+	}
+
+	@Override
+	public List<TbItemCat> findAllByParentId(Long parentid) {
+		TbItemCatExample catExample=new TbItemCatExample();
+		Criteria criteria = catExample.createCriteria();
+		criteria.andParentIdEqualTo(parentid);
+		return itemCatMapper.selectByExample(catExample); 
+	}
+	
+
+}

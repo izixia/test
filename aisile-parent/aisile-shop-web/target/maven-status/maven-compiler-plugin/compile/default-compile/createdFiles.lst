@@ -1,0 +1,6 @@
+com\aisile\service\UserDetailsServiceImpl.class
+com\aisile\shop\controller\ItemCatController.class
+com\aisile\shop\controller\GoodsController.class
+com\aisile\shop\controller\TypeTemplateController.class
+com\aisile\shop\controller\UploadController.class
+com\aisile\shop\controller\SellerController.class

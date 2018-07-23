@@ -1,0 +1,32 @@
+package com.aisile.pojo.entity;
+
+import java.io.Serializable;
+
+/**
+*
+*@author：小郭
+*@date：2018年7月7日 上午7:29:54
+*/
+public class Result implements Serializable{
+	private boolean success;
+	private String message;
+	public Result(boolean success, String message) {
+		super();
+		this.success = success;
+		this.message = message;
+	}
+	public boolean isSuccess() {
+		return success;
+	}
+	public void setSuccess(boolean success) {
+		this.success = success;
+	}
+	public String getMessage() {
+		return message;
+	}
+	public void setMessage(String message) {
+		this.message = message;
+	}
+	
+	
+}

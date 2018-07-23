@@ -1,0 +1,89 @@
+package com.aisile.sellergoods.service.impl;
+
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.aisile.mapper.TbGoodsDescMapper;
+import com.aisile.mapper.TbGoodsMapper;
+import com.aisile.pojo.TbGoods;
+import com.aisile.pojo.entity.PageResult;
+import com.aisile.pojo.group.Goods;
+import com.aisile.sellergoods.service.GoodsService;
+import com.alibaba.dubbo.config.annotation.Service;
+
+/**
+*
+*@author：郭Sir
+*@date：2018年7月13日 下午8:27:13
+*/
+@Service
+public class GoodsServiceImpl implements GoodsService {
+
+	@Autowired
+	private TbGoodsMapper tbGoodsMapper;
+	
+	@Autowired
+	private TbGoodsDescMapper tbGoodsDescMapper;
+	
+	@Override  // 添加商品
+	public void add(Goods goods) {	
+		//第一步保存SPU
+		tbGoodsMapper.insert(goods.getGoods());	
+		//可以获得goods插入的id了
+		//第二步desc表
+		goods.getGoodsDesc().setGoodsId(goods.getGoods().getId());
+		tbGoodsDescMapper.insert(goods.getGoodsDesc());
+		//第三步SKU
+	}
+
+	@Override
+	public List<TbGoods> findAll() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public PageResult findPage(int pageNum, int pageSize) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public PageResult findSearch(int pageNum, int pageSize, TbGoods goods) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void update(TbGoods goods) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public TbGoods findOne(Long id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean delete(Long[] ids) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public List<Map> selectOptionList() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<TbGoods> findAllByParentId(Long parentid) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}
